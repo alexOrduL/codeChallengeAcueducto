@@ -1,0 +1,59 @@
+{
+  "name": "palindrome-ecommerce",
+  "version": "1.0.0",
+  "description": "Ecommerce moderno con descuentos automáticos del 50% al buscar palíndromos",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "setup": "docker compose down --volumes --remove-orphans && docker compose build --no-cache && docker compose up -d postgres && sleep 15 && docker compose up -d backend && sleep 20 && docker compose up -d frontend && echo '✅ Setup completo! Frontend: http://localhost:3000'",
+    "dev": "docker compose -f docker-compose.dev.yml down --volumes && docker compose -f docker-compose.dev.yml build --no-cache && docker compose -f docker-compose.dev.yml up -d && echo '🔥 Desarrollo activo! Hot reload habilitado'",
+    "test": "docker compose -f docker-compose.dev.yml up -d && sleep 20 && docker compose -f docker-compose.dev.yml exec backend-dev npm test && docker compose -f docker-compose.dev.yml exec backend-dev npm run test:e2e && docker compose -f docker-compose.dev.yml exec frontend-dev npm test -- --watchAll=false",
+    "start": "docker compose up -d",
+    "start:dev": "docker compose -f docker-compose.dev.yml up -d",
+    "stop": "docker compose down",
+    "stop:dev": "docker compose -f docker-compose.dev.yml down",
+    "clean": "docker compose down --volumes --remove-orphans",
+    "logs": "docker compose logs -f",
+    "logs:dev": "docker compose -f docker-compose.dev.yml logs -f",
+    "build": "docker compose build",
+    "build:dev": "docker compose -f docker-compose.dev.yml build",
+    "ps": "docker compose ps",
+    "restart": "docker compose restart",
+    "backend:test": "docker compose exec backend npm test",
+    "backend:test:e2e": "docker compose exec backend npm run test:e2e",
+    "frontend:test": "docker compose exec frontend npm test -- --watchAll=false",
+    "frontend:test:e2e": "docker compose exec frontend npm run test:e2e",
+    "db:connect": "docker compose exec postgres psql -U palindrome_user -d palindrome_db",
+    "db:status": "docker compose exec postgres psql -U palindrome_user -d palindrome_db -c 'SELECT COUNT(*) as productos FROM products;'"
+  },
+  "keywords": [
+    "ecommerce",
+    "palindrome",
+    "nextjs",
+    "nestjs",
+    "typescript",
+    "docker",
+    "postgresql",
+    "tailwindcss",
+    "modern-ui",
+    "glass-morphism"
+  ],
+  "author": "Palindrome Store Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0",
+    "docker": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/palindrome-ecommerce.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/palindrome-ecommerce/issues"
+  },
+  "homepage": "https://github.com/your-org/palindrome-ecommerce#readme"
+}
