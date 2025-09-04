@@ -1,0 +1,33 @@
+# Dockerfile para desarrollo con hot reload
+FROM node:18-alpine
+
+# Instalar dependencias del sistema
+RUN apk add --no-cache libc6-compat curl
+
+# Crear usuario no-root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+WORKDIR /app
+
+# Copiar archivos de configuración
+COPY package*.json ./
+COPY next.config.js ./
+COPY tailwind.config.js ./
+COPY postcss.config.js ./
+COPY tsconfig.json ./
+
+# Instalar dependencias (incluyendo devDependencies para desarrollo)
+RUN npm install
+
+# Cambiar propietario de node_modules
+RUN chown -R nextjs:nodejs /app/node_modules
+
+# Cambiar a usuario no-root
+USER nextjs
+
+# Exponer puerto
+EXPOSE 3000
+
+# Comando por defecto para desarrollo
+CMD ["npm", "run", "dev"]
