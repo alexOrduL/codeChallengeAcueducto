@@ -1,0 +1,77 @@
+services:
+  # Base de datos (igual que producción)
+  postgres:
+    image: postgres:15-alpine
+    container_name: palindrome-postgres-dev
+    environment:
+      POSTGRES_DB: palindrome_db
+      POSTGRES_USER: palindrome_user
+      POSTGRES_PASSWORD: palindrome_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U palindrome_user -d palindrome_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend en modo desarrollo con hot reload
+  backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: palindrome-backend-dev
+    environment:
+      NODE_ENV: development
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: palindrome_user
+      DB_PASSWORD: palindrome_password
+      DB_DATABASE: palindrome_db
+      PORT: 3001
+    ports:
+      - "3001:3001"
+      - "9229:9229"  # Puerto para debugging
+    volumes:
+      - ./backend/src:/app/src:ro
+      - ./backend/package.json:/app/package.json:ro
+      - ./backend/tsconfig.json:/app/tsconfig.json:ro
+      - ./backend/nest-cli.json:/app/nest-cli.json:ro
+      - backend_node_modules:/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: npm run start:debug
+    restart: unless-stopped
+
+  # Frontend en modo desarrollo con hot reload
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: palindrome-frontend-dev
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src:ro
+      - ./frontend/public:/app/public:ro
+      - ./frontend/package.json:/app/package.json:ro
+      - ./frontend/next.config.js:/app/next.config.js:ro
+      - ./frontend/tailwind.config.js:/app/tailwind.config.js:ro
+      - ./frontend/tsconfig.json:/app/tsconfig.json:ro
+      - ./frontend/postcss.config.js:/app/postcss.config.js:ro
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend-dev
+    command: npm run dev
+    restart: unless-stopped
+
+volumes:
+  postgres_data_dev:
+  backend_node_modules:
+  frontend_node_modules:

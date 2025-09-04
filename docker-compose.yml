@@ -1,0 +1,95 @@
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: palindrome-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: palindrome_db
+      POSTGRES_USER: palindrome_user
+      POSTGRES_PASSWORD: palindrome_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init-db.sql:/docker-entrypoint-initdb.d/01-init-db.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - palindrome-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U palindrome_user -d palindrome_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend NestJS
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: palindrome-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: palindrome_user
+      DB_PASSWORD: palindrome_password
+      DB_NAME: palindrome_db
+      FRONTEND_URL: http://localhost:3000
+    ports:
+      - "3001:3001"
+    networks:
+      - palindrome-network
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend/src/database:/app/src/database:ro
+
+  # Frontend Next.js
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: palindrome-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    ports:
+      - "3000:3000"
+    networks:
+      - palindrome-network
+    depends_on:
+      - backend
+
+  # Servicio para ejecutar seeds de base de datos
+  db-seed:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: palindrome-db-seed
+    environment:
+      NODE_ENV: development
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: palindrome_user
+      DB_PASSWORD: palindrome_password
+      DB_NAME: palindrome_db
+    networks:
+      - palindrome-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["node", "-r", "ts-node/register", "src/database/seeds/seed.ts"]
+    profiles:
+      - seed
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  palindrome-network:
+    driver: bridge
