@@ -70,7 +70,7 @@ export const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
         <div className="mb-8">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 float-animation">
             Encuentra tu equipo de{' '}
-            <span className="text-gradient-brand bg-white bg-clip-text text-transparent">
+            <span className="text-gradient-brand bg-gradient-to-r from-yellow-300 via-white to-blue-300 bg-clip-text text-transparent animate-pulse font-extrabold">
               tenis perfecto
             </span>
           </h2>

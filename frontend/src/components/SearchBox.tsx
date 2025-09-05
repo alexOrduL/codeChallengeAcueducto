@@ -121,7 +121,7 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
         
         {searchState === 'typing' && (
           <p className="text-sm text-yellow-300 text-center font-medium">
-            Escribiendo... (búsqueda en {Math.ceil((1000) / 1000)}s)
+            Escribiendo...
           </p>
         )}
         
