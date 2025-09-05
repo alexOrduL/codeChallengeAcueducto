@@ -7,10 +7,17 @@ export interface ProductWithDiscount extends Omit<Product, 'price'> {
   discountAmount: number;
 }
 
+export interface SearchResponseMeta {
+  searchTime?: number;
+  timestamp: string;
+  version: string;
+}
+
 export class SearchResponseDto {
   products: ProductWithDiscount[];
   isPalindrome: boolean;
   discountApplied: number;
   totalResults: number;
   searchTerm: string;
+  meta?: SearchResponseMeta;
 }

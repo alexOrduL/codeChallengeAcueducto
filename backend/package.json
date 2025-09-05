@@ -1,5 +1,5 @@
 {
-  "name": "za-duck-duck-duck-tennis-backend",
+  "name": "palindrome-tennis-backend",
   "version": "1.0.0",
   "description": "Backend para ecommerce de tenis con búsqueda de palíndromos",
   "author": "",
@@ -30,10 +30,13 @@
     "@nestjs/platform-express": "10.2.10",
     "@nestjs/typeorm": "10.0.1",
     "@nestjs/config": "3.1.1",
+    "@nestjs/throttler": "5.0.1",
     "typeorm": "0.3.17",
     "pg": "8.11.3",
     "class-validator": "0.14.0",
     "class-transformer": "0.5.1",
+    "helmet": "7.1.0",
+    "class-sanitizer": "1.0.1",
     "reflect-metadata": "0.1.13",
     "rxjs": "7.8.1"
   },
