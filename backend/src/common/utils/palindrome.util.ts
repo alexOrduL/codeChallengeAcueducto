@@ -13,7 +13,8 @@ export function isPalindrome(text: string): boolean {
   // Usar \p{L} para letras Unicode (incluye ñ, acentos, etc.) y \p{N} para números
   const cleanText = text.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase();
   
-  if (cleanText.length === 0) {
+  // Un palíndromo debe tener al menos 2 caracteres
+  if (cleanText.length < 2) {
     return false;
   }
 
