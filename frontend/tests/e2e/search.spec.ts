@@ -126,4 +126,49 @@ test.describe('Search Functionality', () => {
     // Check if palindrome is detected
     await expect(page.getByTestId('palindrome-badge')).toBeVisible();
   });
+
+  test('🎯 should show palindrome detected message when palindrome has no results', async ({ page }) => {
+    // Search for a palindrome that doesn't exist in products
+    await page.getByTestId('search-input').fill('qwq');
+    
+    // Wait for search to complete
+    await page.waitForTimeout(1500); // Wait for debounce + search
+    
+    // Should show palindrome detected message
+    await expect(page.getByText('¡Palíndromo detectado!')).toBeVisible();
+    
+    // Should explain the palindrome was valid but no products found
+    await expect(page.getByText(/es un palíndromo válido con 50% de descuento/)).toBeVisible();
+    await expect(page.getByText(/pero no encontramos productos que coincidan/)).toBeVisible();
+    
+    // Should show palindrome-specific button
+    await expect(page.getByText('Buscar otros palíndromos')).toBeVisible();
+    
+    // Should show palindrome suggestions
+    await expect(page.getByText('abba')).toBeVisible();
+    await expect(page.getByText('level')).toBeVisible();
+    await expect(page.getByText('noon')).toBeVisible();
+    await expect(page.getByText('racecar')).toBeVisible();
+    await expect(page.getByText('madam')).toBeVisible();
+  });
+
+  test('🎯 should differentiate between palindrome and regular empty states', async ({ page }) => {
+    // First, test regular search with no results
+    await page.getByTestId('search-input').fill('nonexistentproduct12345');
+    await page.waitForTimeout(1500);
+    
+    // Should show regular empty state
+    await expect(page.getByText('No encontramos productos')).toBeVisible();
+    await expect(page.getByText('Limpiar búsqueda')).toBeVisible();
+    await expect(page.queryByText('¡Palíndromo detectado!')).not.toBeVisible();
+    
+    // Now test palindrome with no results
+    await page.getByTestId('search-input').fill('qwq');
+    await page.waitForTimeout(1500);
+    
+    // Should show palindrome-specific empty state
+    await expect(page.getByText('¡Palíndromo detectado!')).toBeVisible();
+    await expect(page.getByText('Buscar otros palíndromos')).toBeVisible();
+    await expect(page.queryByText('No encontramos productos')).not.toBeVisible();
+  });
 });

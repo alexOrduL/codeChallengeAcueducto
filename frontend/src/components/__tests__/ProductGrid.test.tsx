@@ -133,4 +133,80 @@ describe('ProductGrid', () => {
     expect(screen.getByText(/¡Bienvenido a Palindrome Store!/)).toBeInTheDocument();
     expect(screen.queryByText('Product 1')).not.toBeInTheDocument();
   });
+
+  test('should show palindrome empty state when palindrome search has no results', () => {
+    const mockOnReset = jest.fn();
+    
+    render(
+      <ProductGrid 
+        {...defaultProps} 
+        products={[]} 
+        isEmpty={true}
+        isPalindrome={true}
+        discountApplied={50}
+        searchTerm="qwq"
+        onReset={mockOnReset}
+      />
+    );
+    
+    // Should show palindrome-specific empty state
+    expect(screen.getByText('¡Palíndromo detectado!')).toBeInTheDocument();
+    expect(screen.getByText(/es un palíndromo válido con 50% de descuento/)).toBeInTheDocument();
+    expect(screen.getByText('Buscar otros palíndromos')).toBeInTheDocument();
+    
+    // Should not show products
+    expect(screen.queryByText('Product 1')).not.toBeInTheDocument();
+  });
+
+  test('should pass palindrome props correctly to EmptyState', () => {
+    const mockOnReset = jest.fn();
+    const mockOnSuggestionClick = jest.fn();
+    
+    render(
+      <ProductGrid 
+        {...defaultProps} 
+        products={[]} 
+        isEmpty={true}
+        isPalindrome={true}
+        discountApplied={25}
+        searchTerm="aba"
+        onReset={mockOnReset}
+        onSuggestionClick={mockOnSuggestionClick}
+      />
+    );
+    
+    // Verify palindrome state with custom discount
+    expect(screen.getByText(/con 25% de descuento/)).toBeInTheDocument();
+    
+    // Test interaction
+    const resetButton = screen.getByText('Buscar otros palíndromos');
+    fireEvent.click(resetButton);
+    expect(mockOnReset).toHaveBeenCalledTimes(1);
+    
+    // Test suggestion click
+    const suggestion = screen.getByText('abba');
+    fireEvent.click(suggestion);
+    expect(mockOnSuggestionClick).toHaveBeenCalledWith('abba');
+  });
+
+  test('should show regular empty state when palindrome is false even with discount', () => {
+    const mockOnReset = jest.fn();
+    
+    render(
+      <ProductGrid 
+        {...defaultProps} 
+        products={[]} 
+        isEmpty={true}
+        isPalindrome={false}
+        discountApplied={50}
+        searchTerm="test"
+        onReset={mockOnReset}
+      />
+    );
+    
+    // Should show regular empty state, not palindrome state
+    expect(screen.getByText('No encontramos productos')).toBeInTheDocument();
+    expect(screen.getByText('Limpiar búsqueda')).toBeInTheDocument();
+    expect(screen.queryByText('¡Palíndromo detectado!')).not.toBeInTheDocument();
+  });
 });

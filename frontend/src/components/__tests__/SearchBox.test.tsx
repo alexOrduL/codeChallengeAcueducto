@@ -77,4 +77,16 @@ describe('SearchBox', () => {
     
     expect(searchInput.value).toBe('');
   });
+
+  it('🎯 should not show any palindrome badge in SearchBox (simplified UX)', () => {
+    const { rerender } = render(<SearchBox onSearch={mockOnSearch} />);
+    
+    // SearchBox no longer shows palindrome badges to avoid UI saturation
+    expect(screen.queryByTestId('palindrome-badge')).not.toBeInTheDocument();
+    
+    // Even with palindrome prop
+    rerender(<SearchBox onSearch={mockOnSearch} isPalindrome={true} />);
+    expect(screen.queryByTestId('palindrome-badge')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Palíndromo detectado/)).not.toBeInTheDocument();
+  });
 });
