@@ -74,7 +74,7 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
           <Input
             type="text"
-            placeholder="Buscar productos... (ej: phone, abba, level)"
+            placeholder="Buscar equipamiento de tenis... (ej: raqueta, wilson, abba, level)"
             value={searchTerm}
             onChange={handleInputChange}
             className={`pl-10 pr-12 py-2 w-full transition-all duration-200 bg-white/95 text-gray-900 placeholder-gray-600 ${
@@ -115,7 +115,7 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
       <div className="mt-2 min-h-[24px] flex justify-center">
         {searchState === 'initial' && (
           <p className="text-sm text-white/90 text-center font-medium">
-            Prueba con "phone" o palíndromos como "abba", "level" para descuentos especiales
+            Prueba con "raqueta", "wilson" o palíndromos como "abba", "level" para descuentos especiales
           </p>
         )}
         

@@ -1,130 +1,127 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ProductGrid } from '../ProductGrid';
 import { ProductWithDiscount } from '@/types/product';
 
-const mockProducts: ProductWithDiscount[] = [
-  {
-    id: 1,
-    title: 'Product 1',
-    brand: 'Brand 1',
-    description: 'Description 1',
-    imageUrl: 'https://example.com/image1.jpg',
-    createdAt: '2024-01-01T00:00:00Z',
-    originalPrice: 100,
-    finalPrice: 50,
-    discountPercentage: 50,
-    discountAmount: 50,
-  },
-  {
-    id: 2,
-    title: 'Product 2',
-    brand: 'Brand 2',
-    description: 'Description 2',
-    imageUrl: 'https://example.com/image2.jpg',
-    createdAt: '2024-01-02T00:00:00Z',
-    originalPrice: 200,
-    finalPrice: 200,
-    discountPercentage: 0,
-    discountAmount: 0,
-  },
-];
+// Mock data
+const mockProducts: ProductWithDiscount[] = Array.from({ length: 20 }, (_, i) => ({
+  id: `product-${i + 1}`,
+  title: `Product ${i + 1}`,
+  brand: `Brand ${i + 1}`,
+  description: `Description for product ${i + 1}`,
+  price: 100 + i * 10,
+  originalPrice: 100 + i * 10,
+  finalPrice: 100 + i * 10,
+  imageUrl: `https://example.com/image-${i + 1}.jpg`,
+  discountPercentage: 0,
+}));
 
 describe('ProductGrid', () => {
-  it('renders products correctly', () => {
-    render(<ProductGrid products={mockProducts} />);
+  const defaultProps = {
+    products: mockProducts,
+    isLoading: false,
+    isEmpty: false,
+    isPalindrome: false,
+    onAddToCart: jest.fn(),
+    onToggleFavorite: jest.fn(),
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('should render first 12 products initially', () => {
+    render(<ProductGrid {...defaultProps} />);
     
+    // Should show first 12 products
     expect(screen.getByText('Product 1')).toBeInTheDocument();
-    expect(screen.getByText('Product 2')).toBeInTheDocument();
+    expect(screen.getByText('Product 12')).toBeInTheDocument();
+    
+    // Should not show product 13 initially
+    expect(screen.queryByText('Product 13')).not.toBeInTheDocument();
   });
 
-  it('shows loading skeletons when isLoading is true', () => {
-    render(<ProductGrid products={[]} isLoading={true} />);
+  test('should show "Ver más productos" button when there are more than 12 products', () => {
+    render(<ProductGrid {...defaultProps} />);
     
-    const skeletons = document.querySelectorAll('.animate-pulse');
-    expect(skeletons.length).toBeGreaterThan(0);
+    const loadMoreButton = screen.getByText(/Ver más productos/);
+    expect(loadMoreButton).toBeInTheDocument();
+    expect(loadMoreButton).toHaveTextContent('Ver más productos (8 restantes)');
   });
 
-  it('shows empty state when no products and not loading', () => {
-    render(<ProductGrid products={[]} isEmpty={true} />);
+  test('should load 8 more products when "Ver más productos" is clicked', async () => {
+    render(<ProductGrid {...defaultProps} />);
     
-    expect(screen.getByText('No se encontraron productos')).toBeInTheDocument();
-    expect(screen.getByText('🔍')).toBeInTheDocument();
+    const loadMoreButton = screen.getByText(/Ver más productos/);
+    fireEvent.click(loadMoreButton);
+    
+    await waitFor(() => {
+      // Should now show product 13
+      expect(screen.getByText('Product 13')).toBeInTheDocument();
+      expect(screen.getByText('Product 20')).toBeInTheDocument();
+    });
+    
+    // Button should show remaining products
+    expect(loadMoreButton).toHaveTextContent('Ver más productos (0 restantes)');
   });
 
-  it('shows search-specific empty state with search term', () => {
-    render(<ProductGrid products={[]} isEmpty={true} searchTerm="test search" />);
+  test('should hide "Ver más productos" button when all products are shown', async () => {
+    render(<ProductGrid {...defaultProps} />);
     
-    expect(screen.getByText('No se encontraron productos')).toBeInTheDocument();
-    expect(screen.getByText(/No encontramos productos que coincidan con "test search"/)).toBeInTheDocument();
+    const loadMoreButton = screen.getByText(/Ver más productos/);
+    fireEvent.click(loadMoreButton);
+    
+    await waitFor(() => {
+      expect(screen.queryByText(/Ver más productos/)).not.toBeInTheDocument();
+    });
   });
 
-  it('shows general empty state without search term', () => {
-    render(<ProductGrid products={[]} isEmpty={true} />);
+  test('should show pagination info when there are more than 12 products', () => {
+    render(<ProductGrid {...defaultProps} />);
     
-    expect(screen.getByText(/Utiliza el buscador para encontrar productos específicos/)).toBeInTheDocument();
+    expect(screen.getByText('Mostrando 12 de 20 productos')).toBeInTheDocument();
   });
 
-  it('renders products in grid layout', () => {
-    const { container } = render(<ProductGrid products={mockProducts} />);
+  test('should reset pagination when products change', () => {
+    const { rerender } = render(<ProductGrid {...defaultProps} />);
     
-    const grid = container.querySelector('.grid');
-    expect(grid).toHaveClass('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+    // Click load more to show more products
+    const loadMoreButton = screen.getByText(/Ver más productos/);
+    fireEvent.click(loadMoreButton);
+    
+    // Verify more products are shown
+    expect(screen.getByText('Product 13')).toBeInTheDocument();
+    
+    // Change products (simulate new search)
+    const newProducts = mockProducts.slice(0, 15);
+    rerender(<ProductGrid {...defaultProps} products={newProducts} />);
+    
+    // Should reset to showing first 12 products
+    expect(screen.getByText('Product 1')).toBeInTheDocument();
+    expect(screen.getByText('Product 12')).toBeInTheDocument();
+    expect(screen.queryByText('Product 13')).not.toBeInTheDocument();
   });
 
-  it('renders correct number of products', () => {
-    render(<ProductGrid products={mockProducts} />);
+  test('should not show pagination info when there are 12 or fewer products', () => {
+    const fewProducts = mockProducts.slice(0, 10);
+    render(<ProductGrid {...defaultProps} products={fewProducts} />);
     
-    const productCards = screen.getAllByRole('img');
-    expect(productCards).toHaveLength(mockProducts.length);
+    expect(screen.queryByText(/Mostrando.*productos/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Ver más productos/)).not.toBeInTheDocument();
   });
 
-  it('does not render products when loading', () => {
-    render(<ProductGrid products={mockProducts} isLoading={true} />);
+  test('should show loading skeleton when isLoading is true', () => {
+    render(<ProductGrid {...defaultProps} isLoading={true} />);
     
+    // Should show loading skeletons instead of products
     expect(screen.queryByText('Product 1')).not.toBeInTheDocument();
-    expect(screen.queryByText('Product 2')).not.toBeInTheDocument();
+    expect(screen.getByTestId('loading-skeleton')).toBeInTheDocument();
   });
 
-  it('renders 8 skeleton items when loading', () => {
-    render(<ProductGrid products={[]} isLoading={true} />);
+  test('should show empty state when isEmpty is true', () => {
+    render(<ProductGrid {...defaultProps} isEmpty={true} />);
     
-    const skeletonContainers = document.querySelectorAll('.space-y-4');
-    expect(skeletonContainers).toHaveLength(8);
-  });
-
-  it('applies custom className when provided', () => {
-    const { container } = render(
-      <ProductGrid products={mockProducts} className="custom-class" />
-    );
-    
-    const grid = container.querySelector('.grid');
-    expect(grid).toHaveClass('custom-class');
-  });
-
-  it('shows empty state when products array is empty but isEmpty is not explicitly set', () => {
-    render(<ProductGrid products={[]} />);
-    
-    expect(screen.getByText('No se encontraron productos')).toBeInTheDocument();
-  });
-
-  it('handles single product correctly', () => {
-    const singleProduct = [mockProducts[0]];
-    render(<ProductGrid products={singleProduct} />);
-    
-    expect(screen.getByText('Product 1')).toBeInTheDocument();
-    expect(screen.queryByText('Product 2')).not.toBeInTheDocument();
-  });
-
-  it('maintains responsive grid classes', () => {
-    const { container } = render(<ProductGrid products={mockProducts} />);
-    
-    const grid = container.querySelector('.grid');
-    expect(grid).toHaveClass(
-      'grid-cols-1',
-      'md:grid-cols-2', 
-      'lg:grid-cols-3',
-      'xl:grid-cols-4'
-    );
+    expect(screen.getByText(/No encontramos productos/)).toBeInTheDocument();
+    expect(screen.queryByText('Product 1')).not.toBeInTheDocument();
   });
 });

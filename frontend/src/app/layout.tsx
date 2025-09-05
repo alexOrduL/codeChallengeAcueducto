@@ -9,13 +9,13 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Palindrome Store - Descuentos especiales para palíndromos',
-  description: 'Ecommerce moderno con búsqueda inteligente que aplica 50% de descuento automáticamente cuando buscas palíndromos. Tecnología premium con UX excepcional.',
-  keywords: ['ecommerce', 'palíndromo', 'descuentos', 'tecnología', 'productos', 'next.js', 'modern ui'],
-  authors: [{ name: 'Palindrome Store Team' }],
+  title: 'Za-🦆🦆🦆 Tennis - Descuentos especiales para palíndromos',
+  description: 'Ecommerce de tenis con búsqueda inteligente que aplica 50% de descuento automáticamente cuando buscas palíndromos. Equipamiento de tenis premium.',
+  keywords: ['tennis', 'tenis', 'palíndromo', 'descuentos', 'raquetas', 'equipamiento deportivo', 'next.js', 'modern ui'],
+  authors: [{ name: 'Za-🦆🦆🦆 Tennis Team' }],
   openGraph: {
-    title: 'Palindrome Store - Descuentos especiales',
-    description: 'Descubre productos increíbles con 50% OFF automático en búsquedas de palíndromos',
+    title: 'Za-🦆🦆🦆 Tennis - Descuentos especiales',
+    description: 'Descubre equipamiento de tenis increíble con 50% OFF automático en búsquedas de palíndromos',
     type: 'website',
   },
   robots: {

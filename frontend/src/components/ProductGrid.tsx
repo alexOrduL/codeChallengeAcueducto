@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { ProductCard } from './ProductCard';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { EmptyState } from './EmptyState';
@@ -31,6 +31,23 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   onToggleFavorite,
   className = '',
 }) => {
+  // Estado para la paginación
+  const [visibleCount, setVisibleCount] = useState(12);
+  
+  // Calcular productos visibles
+  const visibleProducts = useMemo(() => {
+    return products.slice(0, visibleCount);
+  }, [products, visibleCount]);
+  
+  // Función para cargar más productos
+  const handleLoadMore = () => {
+    setVisibleCount(prev => Math.min(prev + 8, products.length));
+  };
+  
+  // Resetear paginación cuando cambian los productos
+  React.useEffect(() => {
+    setVisibleCount(12);
+  }, [products]);
   // Loading State
   if (isLoading) {
     return (
@@ -78,7 +95,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
 
       {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product, index) => (
+        {visibleProducts.map((product, index) => (
           <div
             key={product.id}
             className="animate-scale-in"
@@ -95,12 +112,27 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         ))}
       </div>
 
-      {/* Load More Button (if needed) */}
-      {products.length >= 12 && (
+      {/* Load More Button */}
+      {visibleCount < products.length && (
         <div className="text-center mt-12 animate-slide-up">
-          <button className="glass-effect px-8 py-3 rounded-full text-brand-600 font-medium hover:bg-white/50 transition-all duration-300 hover:scale-105">
-            Ver más productos
+          <button 
+            onClick={handleLoadMore}
+            className="glass-effect px-8 py-3 rounded-full text-brand-600 font-medium hover:bg-white/50 transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+          >
+            Ver más productos ({products.length - visibleCount} restantes)
           </button>
+        </div>
+      )}
+
+      {/* Pagination Info */}
+      {products.length > 12 && (
+        <div className="text-center mt-6 animate-slide-up">
+          <div className="glass-effect inline-block px-4 py-2 rounded-full">
+            <p className="text-sm text-gray-600">
+              Mostrando <span className="font-semibold text-brand-600">{visibleCount}</span> de{' '}
+              <span className="font-semibold text-brand-600">{products.length}</span> productos
+            </p>
+          </div>
         </div>
       )}
     </div>

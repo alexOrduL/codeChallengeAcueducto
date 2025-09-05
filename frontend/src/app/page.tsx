@@ -141,10 +141,14 @@ export default function HomePage() {
           <div className="text-center mt-12 animate-slide-up">
             <div className="glass-effect inline-block px-6 py-3 rounded-full">
               <p className="text-gray-700">
-                Mostrando <span className="font-bold">{productsToShow.length}</span> de{' '}
-                <span className="font-bold">{searchResult?.totalResults}</span> productos
-                {currentSearchTerm && (
-                  <span> para "<span className="font-medium">{currentSearchTerm}</span>"</span>
+                {currentSearchTerm ? (
+                  <>
+                    <span className="font-bold">{searchResult?.totalResults}</span> producto{searchResult?.totalResults !== 1 ? 's' : ''} encontrado{searchResult?.totalResults !== 1 ? 's' : ''} para "<span className="font-medium">{currentSearchTerm}</span>"
+                  </>
+                ) : (
+                  <>
+                    <span className="font-bold">{searchResult?.totalResults}</span> productos disponibles
+                  </>
                 )}
                 {searchResult?.isPalindrome && (
                   <span className="text-green-600 font-medium ml-2">

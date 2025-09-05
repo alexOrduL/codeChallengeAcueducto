@@ -15,12 +15,12 @@ export const ModernHeader: React.FC<ModernHeaderProps> = ({ className = '' }) =>
           {/* Logo y Branding */}
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 glass-effect rounded-full flex items-center justify-center backdrop-blur">
-              <span className="text-2xl animate-pulse">🔄</span>
+              <span className="text-2xl animate-pulse">🎾</span>
             </div>
             <div className="flex flex-col">
-              <h1 className="text-2xl font-bold tracking-tight">Palindrome Store</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Za-🦆🦆🦆 Tennis</h1>
               <span className="text-xs text-white/70 hidden sm:block">
-                Descuentos especiales para palíndromos
+                Equipamiento de tenis con descuentos especiales
               </span>
             </div>
           </div>

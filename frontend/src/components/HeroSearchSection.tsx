@@ -69,9 +69,9 @@ export const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
         {/* Hero Title */}
         <div className="mb-8">
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 float-animation">
-            Encuentra tu equipo{' '}
+            Encuentra tu equipo de{' '}
             <span className="text-gradient-brand bg-white bg-clip-text text-transparent">
-              perfecto
+              tenis perfecto
             </span>
           </h2>
           <p className="text-xl md:text-2xl mb-2 text-white/90">
@@ -80,7 +80,7 @@ export const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
             <Sparkles className="inline-block w-6 h-6 ml-2 text-yellow-300 animate-pulse" />
           </p>
           <p className="text-sm md:text-base text-white/70">
-            Tecnología premium con descuentos únicos por palindromes
+            Equipamiento de tenis premium con descuentos únicos por palíndromos
           </p>
         </div>
 
@@ -101,7 +101,7 @@ export const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
 
         {/* Examples Pills */}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {['phone', 'abba', 'level', 'racecar'].map((example, index) => (
+          {['raqueta', 'wilson', 'abba', 'level', 'racecar', 'nike'].map((example, index) => (
             <button
               key={example}
               onClick={() => onSearch(example)}
@@ -126,7 +126,7 @@ export const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-            <span className="text-sm text-white font-medium">12+ productos disponibles</span>
+            <span className="text-sm text-white font-medium">42+ productos disponibles</span>
           </div>
         </div>
       </div>
