@@ -1,7 +1,7 @@
 {
-  "name": "palindrome-ecommerce-backend",
+  "name": "za-duck-duck-duck-tennis-backend",
   "version": "1.0.0",
-  "description": "Backend para ecommerce con búsqueda de palíndromos",
+  "description": "Backend para ecommerce de tenis con búsqueda de palíndromos",
   "author": "",
   "private": true,
   "license": "MIT",

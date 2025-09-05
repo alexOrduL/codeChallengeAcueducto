@@ -4,10 +4,6 @@ FROM node:18-alpine
 # Instalar dependencias del sistema
 RUN apk add --no-cache libc6-compat curl
 
-# Crear usuario no-root
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
 WORKDIR /app
 
 # Copiar archivos de configuración
@@ -20,11 +16,13 @@ COPY tsconfig.json ./
 # Instalar dependencias (incluyendo devDependencies para desarrollo)
 RUN npm install
 
-# Cambiar propietario de node_modules
-RUN chown -R nextjs:nodejs /app/node_modules
+# Crear directorios necesarios con permisos correctos
+RUN mkdir -p /app/.next
+RUN mkdir -p /app/src
+RUN mkdir -p /app/public
 
-# Cambiar a usuario no-root
-USER nextjs
+# Cambiar permisos del directorio de trabajo
+RUN chmod -R 755 /app
 
 # Exponer puerto
 EXPOSE 3000

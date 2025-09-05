@@ -4,10 +4,6 @@ FROM node:18-alpine
 # Instalar dependencias del sistema
 RUN apk add --no-cache postgresql-client curl
 
-# Crear usuario no-root
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nestjs
-
 WORKDIR /app
 
 # Copiar archivos de configuración
@@ -18,11 +14,12 @@ COPY nest-cli.json ./
 # Instalar dependencias (incluyendo devDependencies para desarrollo)
 RUN npm install
 
-# Cambiar propietario de node_modules
-RUN chown -R nestjs:nodejs /app/node_modules
+# Crear directorios necesarios con permisos correctos
+RUN mkdir -p /app/dist
+RUN mkdir -p /app/src
 
-# Cambiar a usuario no-root
-USER nestjs
+# Cambiar permisos del directorio de trabajo
+RUN chmod -R 755 /app
 
 # Exponer puerto para la aplicación y debugging
 EXPOSE 3001 9229
