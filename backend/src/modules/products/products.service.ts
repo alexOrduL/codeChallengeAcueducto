@@ -43,16 +43,26 @@ export class ProductsService {
     // Crear query builder para búsqueda compleja
     const queryBuilder = this.productRepository.createQueryBuilder('product');
     
-    // Lógica de búsqueda LIKE parcial desde el primer carácter:
-    // 1. Título que contenga el término (LIKE parcial)
-    // 2. Marca que contenga el término (LIKE parcial)
-    // 3. Descripción que contenga el término (LIKE parcial)
-    queryBuilder.where(
-      'LOWER(product.title) ILIKE :substring OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring',
-      {
-        substring: `%${cleanSearchTerm}%`,
-      }
-    );
+    // Lógica de búsqueda según assessment:
+    // 1. Título: búsqueda EXACTA (case-insensitive)
+    // 2. Marca: LIKE parcial solo si > 3 caracteres
+    // 3. Descripción: LIKE parcial solo si > 3 caracteres
+    
+    const conditions: string[] = [];
+    const parameters: any = {};
+    
+    // Búsqueda exacta en título (siempre)
+    conditions.push('LOWER(product.title) = :exactTitle');
+    parameters.exactTitle = cleanSearchTerm;
+    
+    // Búsqueda LIKE en marca y descripción solo si > 3 caracteres
+    if (cleanSearchTerm.length > 3) {
+      conditions.push('LOWER(product.brand) ILIKE :substring');
+      conditions.push('LOWER(product.description) ILIKE :substring');
+      parameters.substring = `%${cleanSearchTerm}%`;
+    }
+    
+    queryBuilder.where(`(${conditions.join(' OR ')})`, parameters);
 
     const products = await queryBuilder.getMany();
     

@@ -88,18 +88,34 @@ describe('ProductsService', () => {
       expect(result.searchTerm).toBe('   ');
     });
 
-    it('should perform LIKE partial search from first character', async () => {
+    it('should perform exact title search and LIKE search for brand/description when > 3 chars', async () => {
       const queryBuilder = {
         where: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(mockProducts),
       };
       mockRepository.createQueryBuilder.mockReturnValue(queryBuilder);
 
-      const result = await service.searchProducts('phone');
+      const result = await service.searchProducts('raqueta');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        'LOWER(product.title) ILIKE :substring OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring',
-        { substring: '%phone%' }
+        '(LOWER(product.title) = :exactTitle OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring)',
+        { exactTitle: 'raqueta', substring: '%raqueta%' }
+      );
+      expect(result.products).toHaveLength(2);
+    });
+
+    it('should only search exact title when search term is <= 3 characters', async () => {
+      const queryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(mockProducts),
+      };
+      mockRepository.createQueryBuilder.mockReturnValue(queryBuilder);
+
+      const result = await service.searchProducts('ab');
+
+      expect(queryBuilder.where).toHaveBeenCalledWith(
+        '(LOWER(product.title) = :exactTitle)',
+        { exactTitle: 'ab' }
       );
       expect(result.products).toHaveLength(2);
     });
@@ -151,7 +167,7 @@ describe('ProductsService', () => {
       );
     });
 
-    it('should handle single character search with LIKE', async () => {
+    it('should handle single character search with exact title only', async () => {
       const queryBuilder = {
         where: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue([]),
@@ -161,36 +177,36 @@ describe('ProductsService', () => {
       await service.searchProducts('p');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        'LOWER(product.title) ILIKE :substring OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring',
-        { substring: '%p%' }
+        '(LOWER(product.title) = :exactTitle)',
+        { exactTitle: 'p' }
       );
     });
 
-    it('should handle partial matches correctly - phone finds smartphone', async () => {
-      const smartphoneProduct = {
+    it('should handle partial matches correctly - raqueta finds tennis products', async () => {
+      const tennisProduct = {
         id: 3,
-        title: 'Smartphone Premium',
-        brand: 'TechBrand',
-        description: 'Advanced smartphone with great features',
-        price: 500,
-        imageUrl: 'smartphone.jpg',
+        title: 'Raqueta ABBA Pro',
+        brand: 'ABBA',
+        description: 'Raqueta de tenis profesional con tecnología ABBA avanzada',
+        price: 199.99,
+        imageUrl: 'raqueta.jpg',
         createdAt: new Date(),
       };
 
       const queryBuilder = {
         where: jest.fn().mockReturnThis(),
-        getMany: jest.fn().mockResolvedValue([smartphoneProduct]),
+        getMany: jest.fn().mockResolvedValue([tennisProduct]),
       };
       mockRepository.createQueryBuilder.mockReturnValue(queryBuilder);
 
-      const result = await service.searchProducts('phone');
+      const result = await service.searchProducts('raqueta');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        'LOWER(product.title) ILIKE :substring OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring',
-        { substring: '%phone%' }
+        '(LOWER(product.title) = :exactTitle OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring)',
+        { exactTitle: 'raqueta', substring: '%raqueta%' }
       );
       expect(result.products).toHaveLength(1);
-      expect(result.products[0].title).toBe('Smartphone Premium');
+      expect(result.products[0].title).toBe('Raqueta ABBA Pro');
     });
 
     it('should handle case insensitive search', async () => {
