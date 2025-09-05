@@ -9,8 +9,9 @@ export function isPalindrome(text: string): boolean {
     return false;
   }
 
-  // Limpiar el texto: solo letras y números, convertir a minúsculas
-  const cleanText = text.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  // Limpiar el texto: remover espacios, puntuación pero mantener letras Unicode y números
+  // Usar \p{L} para letras Unicode (incluye ñ, acentos, etc.) y \p{N} para números
+  const cleanText = text.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase();
   
   if (cleanText.length === 0) {
     return false;

@@ -162,7 +162,7 @@ describe('ProductsService', () => {
       await service.searchProducts('ab');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        'LOWER(product.title) = :exactTitle',
+        '(LOWER(product.title) = :exactTitle)',
         { exactTitle: 'ab' }
       );
     });
@@ -219,8 +219,8 @@ describe('ProductsService', () => {
       await service.searchProducts('PHONE');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        'LOWER(product.title) ILIKE :substring OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring',
-        { substring: '%phone%' }
+        '(LOWER(product.title) = :exactTitle OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring)',
+        { exactTitle: 'phone', substring: '%phone%' }
       );
     });
   });
