@@ -14,7 +14,8 @@ COPY postcss.config.js ./
 COPY tsconfig.json ./
 
 # Instalar dependencias (incluyendo devDependencies para desarrollo)
-RUN npm install
+# Usar npm install para desarrollo y limpiar caché después
+RUN npm install && npm cache clean --force
 
 # Crear directorios necesarios con permisos correctos
 RUN mkdir -p /app/.next

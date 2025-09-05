@@ -21,7 +21,7 @@ import { SeedService } from './database/seed.service';
         password: configService.get('DB_PASSWORD', 'palindrome_password'),
         database: configService.get('DB_NAME', 'palindrome_db'),
         entities: [Product],
-        synchronize: true, // Habilitado para demo
+        synchronize: true, // Temporalmente usar synchronize hasta que las migraciones funcionen
         logging: configService.get('NODE_ENV') === 'development',
       }),
       inject: [ConfigService],
