@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { ModernHeader } from '@/components/ModernHeader';
 import { HeroSearchSection } from '@/components/HeroSearchSection';
 import { ProductGrid } from '@/components/ProductGrid';
-import { productsApi } from '@/lib/api';
+import { productsApi, handleApiError } from '@/lib/api';
 import { SearchResponse } from '@/types/product';
 
 export default function HomePage() {
@@ -14,28 +14,46 @@ export default function HomePage() {
   const [searchState, setSearchState] = useState<'initial' | 'typing' | 'loading' | 'results' | 'empty' | 'error'>('initial');
   const [currentSearchTerm, setCurrentSearchTerm] = useState('');
 
-  // Cargar todos los productos al inicio
+  // Cargar todos los productos al inicio (con deduplicación)
   useEffect(() => {
+    let isCancelled = false;
+    
     const loadAllProducts = async () => {
       try {
         setIsLoading(true);
         setSearchState('loading');
         
         const result = await productsApi.search('');
-        setSearchResult(result);
-        setSearchState('results');
-      } catch (err) {
-        console.error('Error loading initial products:', err);
-        setError('Error al cargar los productos');
-        setSearchState('error');
+        
+        // Solo actualizar si el efecto no fue cancelado
+        if (!isCancelled) {
+          setSearchResult(result);
+          setSearchState('results');
+        }
+      } catch (err: any) {
+        if (!isCancelled) {
+          const errorMessage = handleApiError(err);
+          setError(errorMessage);
+          setSearchState('error');
+        }
       } finally {
-        setIsLoading(false);
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
       }
     };
 
     loadAllProducts();
+    
+    // Cleanup function para cancelar el efecto
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
+  // Ref para cancelar requests pendientes y evitar duplicados
+  const lastSearchRef = React.useRef<string>('');
+  
   const handleSearch = useCallback(async (query: string, isTyping = false) => {
     setCurrentSearchTerm(query);
     setError(null);
@@ -46,32 +64,48 @@ export default function HomePage() {
       return;
     }
 
+    // Evitar requests duplicados
+    if (lastSearchRef.current === query) {
+      return;
+    }
+    
+    lastSearchRef.current = query;
+
     try {
       setIsLoading(true);
       setSearchState('loading');
       
       const result = await productsApi.search(query);
-      setSearchResult(result);
       
-      // Determinar el estado final
-      if (result.totalResults === 0 && query.trim().length > 0) {
-        setSearchState('empty');
-      } else {
-        setSearchState('results');
+      // Solo actualizar si el query sigue siendo el mismo (evitar race conditions)
+      if (lastSearchRef.current === query) {
+        setSearchResult(result);
+        
+        // Determinar el estado final
+        if (result.totalResults === 0 && query.trim().length > 0) {
+          setSearchState('empty');
+        } else {
+          setSearchState('results');
+        }
       }
     } catch (err: any) {
-      console.error('Search error:', err);
-      setError(err.response?.data?.message || 'Error al buscar productos');
-      setSearchState('error');
-      setSearchResult({
-        products: [],
-        isPalindrome: false,
-        discountApplied: 0,
-        totalResults: 0,
-        searchTerm: query,
-      });
+      // Solo manejar error si el query sigue siendo el mismo
+      if (lastSearchRef.current === query) {
+        const errorMessage = handleApiError(err);
+        setError(errorMessage);
+        setSearchState('error');
+        setSearchResult({
+          products: [],
+          isPalindrome: false,
+          discountApplied: 0,
+          totalResults: 0,
+          searchTerm: query,
+        });
+      }
     } finally {
-      setIsLoading(false);
+      if (lastSearchRef.current === query) {
+        setIsLoading(false);
+      }
     }
   }, []);
 
@@ -86,12 +120,10 @@ export default function HomePage() {
   }, [handleSearch]);
 
   const handleAddToCart = useCallback((productId: string) => {
-    console.log('Add to cart:', productId);
     // TODO: Implementar lógica del carrito
   }, []);
 
   const handleToggleFavorite = useCallback((productId: string) => {
-    console.log('Toggle favorite:', productId);
     // TODO: Implementar lógica de favoritos
   }, []);
 
@@ -129,6 +161,7 @@ export default function HomePage() {
           isLoading={searchState === 'loading'}
           isEmpty={searchState === 'empty'}
           isPalindrome={searchResult?.isPalindrome}
+          discountApplied={searchResult?.discountApplied}
           searchTerm={currentSearchTerm}
           onReset={handleReset}
           onSuggestionClick={handleSuggestionClick}

@@ -9,6 +9,8 @@ interface EmptyStateProps {
   onReset?: () => void;
   onSuggestionClick?: (suggestion: string) => void;
   searchTerm?: string;
+  isPalindrome?: boolean;
+  discountApplied?: number;
   className?: string;
 }
 
@@ -22,7 +24,7 @@ interface EmptyStateVariant {
   bgColor: string;
 }
 
-const getEmptyStateVariant = (searchTerm?: string): EmptyStateVariant => {
+const getEmptyStateVariant = (searchTerm?: string, isPalindrome?: boolean, discountApplied?: number): EmptyStateVariant => {
   if (!searchTerm || searchTerm.trim() === '') {
     return {
       icon: Search,
@@ -32,6 +34,19 @@ const getEmptyStateVariant = (searchTerm?: string): EmptyStateVariant => {
       buttonText: 'Ver todos los productos',
       iconColor: 'text-brand-500',
       bgColor: 'bg-brand-50'
+    };
+  }
+
+  // Caso especial: Palíndromo detectado pero sin productos
+  if (isPalindrome && discountApplied && discountApplied > 0) {
+    return {
+      icon: Sparkles,
+      title: '¡Palíndromo detectado!',
+      description: `"${searchTerm}" es un palíndromo válido con ${discountApplied}% de descuento, pero no encontramos productos que coincidan. Prueba con otros términos palíndromos.`,
+      suggestions: ['abba', 'level', 'noon', 'racecar', 'madam'],
+      buttonText: 'Buscar otros palíndromos',
+      iconColor: 'text-green-500',
+      bgColor: 'bg-green-50'
     };
   }
 
@@ -50,9 +65,11 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onReset,
   onSuggestionClick,
   searchTerm,
+  isPalindrome = false,
+  discountApplied = 0,
   className = ''
 }) => {
-  const variant = getEmptyStateVariant(searchTerm);
+  const variant = getEmptyStateVariant(searchTerm, isPalindrome, discountApplied);
   const IconComponent = variant.icon;
 
   return (

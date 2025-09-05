@@ -11,6 +11,7 @@ interface ProductGridProps {
   isLoading?: boolean;
   isEmpty?: boolean;
   isPalindrome?: boolean;
+  discountApplied?: number;
   searchTerm?: string;
   onReset?: () => void;
   onSuggestionClick?: (suggestion: string) => void;
@@ -24,6 +25,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   isLoading = false,
   isEmpty = false,
   isPalindrome = false,
+  discountApplied = 0,
   searchTerm = '',
   onReset,
   onSuggestionClick,
@@ -63,6 +65,8 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
       <div className={`animate-slide-up ${className}`}>
         <EmptyState
           searchTerm={searchTerm}
+          isPalindrome={isPalindrome}
+          discountApplied={discountApplied}
           onReset={onReset}
           onSuggestionClick={onSuggestionClick}
         />
@@ -80,14 +84,6 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             <h3 className="text-xl font-semibold text-gray-900">
               {products.length} producto{products.length !== 1 ? 's' : ''} encontrado{products.length !== 1 ? 's' : ''}
             </h3>
-            {isPalindrome && (
-              <div className="flex items-center space-x-2 glass-effect px-4 py-2 rounded-full">
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                <span className="text-sm font-medium text-green-700">
-                  ¡50% OFF aplicado por palíndromo!
-                </span>
-              </div>
-            )}
           </div>
           <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
         </div>
