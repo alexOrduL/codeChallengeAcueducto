@@ -1,7 +1,7 @@
 {
-  "name": "palindrome-ecommerce",
+  "name": "za-duck-duck-duck-tennis",
   "version": "1.0.0",
-  "description": "Ecommerce moderno con descuentos automáticos del 50% al buscar palíndromos",
+  "description": "Ecommerce de tenis con descuentos automáticos del 50% al buscar palíndromos",
   "private": true,
   "workspaces": [
     "frontend",
