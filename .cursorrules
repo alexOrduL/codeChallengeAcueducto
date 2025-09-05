@@ -1,0 +1,197 @@
+# 🤖 Cursor/Claude AI Rules para Palindrome Ecommerce
+
+## 📋 CONTEXTO DEL PROYECTO
+Este es un challenge técnico para Acueducto Studio - Fullstack Developer Senior.
+Ecommerce de tenis con descuentos automáticos del 50% al buscar palíndromos.
+
+## 🎯 STACK TECNOLÓGICO OBLIGATORIO
+- Frontend: Next.js 14, TypeScript, Tailwind CSS, Shadcn/ui
+- Backend: NestJS, TypeORM, PostgreSQL
+- Testing: Jest, Testing Library, Playwright
+- DevOps: Docker, Docker Compose
+
+## 📐 REGLAS DE CÓDIGO
+
+### General
+- Usar TypeScript estricto en todo el proyecto
+- Seguir convenciones de Clean Code y Clean Architecture
+- Documentar funciones complejas con JSDoc
+- Manejar errores apropiadamente con try-catch
+- Usar nombres descriptivos en inglés para variables/funciones
+- Comentarios en español para explicaciones de negocio
+
+### Backend (NestJS)
+- Usar decoradores apropiados (@Injectable, @Controller, etc.)
+- Implementar DTOs con class-validator para validación
+- Usar Repository Pattern con TypeORM
+- Separar lógica de negocio en servicios
+- Implementar tests unitarios y de integración
+
+### Frontend (Next.js)
+- Usar App Router de Next.js 14
+- Componentes funcionales con TypeScript
+- Hooks personalizados para lógica reutilizable
+- Shadcn/ui para componentes base
+- Tailwind para estilos con clases utilitarias
+- Estados de carga y manejo de errores en UI
+
+### Testing
+- Tests unitarios para utilidades y servicios
+- Tests de componentes con Testing Library
+- Tests E2E con Playwright para flujos críticos
+- Mocks apropiados para dependencias externas
+
+## 🎨 DISEÑO Y UX
+- Diseño moderno con glassmorphism
+- Responsive design mobile-first
+- Animaciones fluidas y micro-interacciones
+- Estados de carga con skeletons
+- Feedback visual inmediato para acciones
+
+## 🔍 LÓGICA DE NEGOCIO ESPECÍFICA
+
+### Palíndromos
+- Ignorar espacios, puntuación y case
+- Soportar caracteres Unicode (ñ, acentos)
+- Aplicar 50% descuento automático
+- Mostrar indicadores visuales de descuento
+
+### Búsqueda de Productos
+- Título: búsqueda EXACTA (case-insensitive)
+- Marca/Descripción: LIKE parcial solo si > 3 caracteres
+- Retornar productos con descuento aplicado si es palíndromo
+
+## 🐳 DOCKER Y DEVOPS
+- Dockerfile optimizado para desarrollo y producción
+- docker-compose.yml para orquestación completa
+- Hot reload en modo desarrollo
+- Scripts npm para tareas comunes
+- Variables de entorno apropiadas
+
+## 📚 DOCUMENTACIÓN
+- README completo con instrucciones detalladas
+- Ejemplos de uso de API
+- Comandos específicos para diferentes escenarios
+- Troubleshooting para problemas comunes
+
+## 🚀 CRITERIOS DE CALIDAD
+- Código autodocumentado y mantenible
+- Arquitectura escalable y modular
+- Performance optimizado
+- Seguridad básica implementada (validaciones, CORS)
+- Tests que cubran casos edge importantes
+
+## 📝 CONVENCIONES DE COMMITS
+- Usar Conventional Commits para todos los commits
+- Formato: `tipo(scope): descripción`
+- Tipos permitidos:
+  - `feat`: Nueva funcionalidad
+  - `fix`: Corrección de bug
+  - `docs`: Cambios en documentación
+  - `style`: Cambios de formato (espacios, comas, etc.)
+  - `refactor`: Refactorización de código
+  - `test`: Añadir o modificar tests
+  - `chore`: Tareas de mantenimiento
+- Ejemplos:
+  - `feat(products): add palindrome discount logic`
+  - `fix(search): resolve case sensitivity issue`
+  - `test(palindrome): add Unicode character tests`
+
+## 🎯 BUENAS PRÁCTICAS ESPECÍFICAS
+
+### Frontend (Next.js/React)
+- Componentes funcionales con TypeScript
+- Props interfaces bien definidas
+- Hooks personalizados para lógica reutilizable
+- Memoización apropiada (useMemo, useCallback)
+- Error boundaries para manejo de errores
+- Lazy loading de componentes pesados
+- Optimización de imágenes con Next.js Image
+- SEO básico con meta tags apropiados
+- Accesibilidad (aria-labels, semantic HTML)
+
+### Backend (NestJS)
+- Inyección de dependencias apropiada
+- DTOs para validación de entrada y salida
+- Guards para autenticación/autorización
+- Interceptors para logging y transformación
+- Pipes para validación y transformación
+- Exception filters para manejo de errores
+- Swagger/OpenAPI documentation
+- Database transactions para operaciones críticas
+- Proper error handling con status codes HTTP
+
+## ⚠️ REGLA CRÍTICA: NO CAMBIOS SIN CONFIRMACIÓN
+- NUNCA generar cambios de código sin confirmación explícita del desarrollador
+- SIEMPRE preguntar antes de:
+  - Crear nuevos archivos
+  - Modificar código existente
+  - Instalar nuevas dependencias
+  - Cambiar configuraciones
+- Proponer cambios y esperar aprobación
+- Explicar el razonamiento detrás de cada cambio propuesto
+
+## 🧪 TESTING OBLIGATORIO
+- Para CADA nueva funcionalidad, considerar y implementar:
+  - Tests unitarios para lógica de negocio
+  - Tests de integración para APIs
+  - Tests E2E para flujos críticos de usuario
+  - Tests de componentes para UI
+
+### Estrategia de Testing por Funcionalidad
+1. **Nueva API Endpoint:**
+   - Test unitario del service
+   - Test de integración del controller
+   - Test E2E del flujo completo
+
+2. **Nuevo Componente UI:**
+   - Test unitario de props y estados
+   - Test de interacciones de usuario
+   - Test E2E si es parte de flujo crítico
+
+3. **Nueva Utilidad/Helper:**
+   - Tests unitarios exhaustivos
+   - Tests de casos edge
+   - Tests de performance si aplica
+
+### Herramientas de Testing
+- **Unitarios:** Jest + Testing Library
+- **Integración:** Supertest (backend)
+- **E2E:** Playwright
+- **Coverage:** Mínimo 80% en funciones críticas
+
+## 🔒 SEGURIDAD AVANZADA OBLIGATORIA
+
+### Rate Limiting
+- Implementar rate limiting en todos los endpoints públicos
+- Límites diferenciados por tipo de endpoint (búsqueda vs CRUD)
+- Rate limiting basado en IP y/o usuario
+- Headers informativos para clientes (X-RateLimit-*)
+
+### Security Headers
+- Helmet.js para headers de seguridad automáticos
+- Content Security Policy (CSP) apropiado
+- HSTS (HTTP Strict Transport Security)
+- X-Frame-Options, X-Content-Type-Options
+- Referrer-Policy y Feature-Policy
+
+### Secrets Management
+- NUNCA hardcodear secrets en código
+- Usar variables de entorno para configuración sensible
+- Validar que todas las env vars críticas estén presentes
+- Diferentes secrets por environment (dev/staging/prod)
+- Documentar todas las variables requeridas en .env.example
+
+### Input Sanitization
+- Sanitizar inputs antes de procesamiento
+- Validar tipos de datos estrictamente
+- Escape de caracteres especiales en outputs
+- Validación de longitud máxima en strings
+- Prevención de NoSQL/SQL injection adicional
+
+### API Security
+- Versionado de APIs obligatorio (/api/v1/)
+- Response format consistente con error codes
+- Logging de intentos de acceso sospechosos
+- Timeout apropiados para requests
+- Validación de Content-Type headers
