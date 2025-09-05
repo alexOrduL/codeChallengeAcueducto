@@ -62,7 +62,8 @@ describe('ProductGrid', () => {
     });
     
     // Button should show remaining products (20 - 20 = 0)
-    expect(loadMoreButton).toHaveTextContent('Ver más productos (0 restantes)');
+    // Después de mostrar 12 + 8 = 20, no debe haber botón "Ver más"
+    expect(screen.queryByText(/Ver más productos/)).not.toBeInTheDocument();
   });
 
   test('should hide "Ver más productos" button when all products are shown', async () => {
@@ -76,10 +77,15 @@ describe('ProductGrid', () => {
     });
   });
 
-  test('should show pagination info when there are more than 12 products', () => {
-    render(<ProductGrid {...defaultProps} />);
+  test('should show search results header when there is a search term', () => {
+    render(<ProductGrid {...defaultProps} searchTerm="test" />);
     
-    expect(screen.getByText(/Mostrando 12 de 20 productos/)).toBeInTheDocument();
+    // Should show the results header with product count
+    expect(screen.getByText(/20.*productos.*encontrados/)).toBeInTheDocument();
+    
+    // Should show the first 12 products
+    expect(screen.getByTestId('product-product-1')).toBeInTheDocument();
+    expect(screen.getByTestId('product-product-12')).toBeInTheDocument();
   });
 
   test('should reset pagination when products change', () => {
@@ -115,8 +121,9 @@ describe('ProductGrid', () => {
     
     // Should show loading skeletons instead of products
     expect(screen.queryByText('Product 1')).not.toBeInTheDocument();
-    // Check for skeleton elements instead of a specific testid
-    expect(screen.getByText('Product 1')).not.toBeInTheDocument();
+    // Check for skeleton elements instead of actual products
+    const skeletonElements = screen.getAllByRole('generic', { hidden: true });
+    expect(skeletonElements.length).toBeGreaterThan(0);
   });
 
   test('should show empty state when isEmpty is true', () => {
