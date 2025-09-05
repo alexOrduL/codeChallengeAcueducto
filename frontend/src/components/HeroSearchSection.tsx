@@ -22,9 +22,14 @@ interface SearchStatusProps {
 const SearchStatus: React.FC<SearchStatusProps> = ({ isPalindrome, resultCount, searchTerm }) => {
   if (!searchTerm) return null;
 
+  // Solo renderizar el contenedor si hay contenido que mostrar
+  const hasContent = (isPalindrome && resultCount > 0) || resultCount > 0;
+  
+  if (!hasContent) return null;
+
   return (
     <div className="mt-4 flex flex-col items-center space-y-2">
-      {isPalindrome && (
+      {isPalindrome && resultCount > 0 && (
         <div className="flex items-center space-x-2 glass-effect px-4 py-2 rounded-full animate-scale-in">
           <Zap className="w-4 h-4 text-yellow-300 animate-pulse" />
           <span className="text-white font-medium">
@@ -85,7 +90,11 @@ export const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
         </div>
 
         {/* Search Container */}
-        <div className="glass-effect rounded-3xl p-6 md:p-8 max-w-2xl mx-auto shadow-2xl">
+        <div className={`glass-effect rounded-3xl max-w-2xl mx-auto shadow-2xl transition-all duration-300 ${
+          (isPalindrome && resultCount > 0) || resultCount > 0 
+            ? 'p-6 md:p-8' 
+            : 'p-6 md:px-8 md:py-6'
+        }`}>
           <SearchBox
             onSearch={onSearch}
             isPalindrome={isPalindrome}
