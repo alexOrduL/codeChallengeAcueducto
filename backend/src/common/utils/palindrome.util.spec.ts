@@ -1,5 +1,12 @@
 import { isPalindrome, calculateDiscountedPrice } from './palindrome.util';
 
+// Helper para logs silenciosos en tests (solo si VERBOSE=true)
+const testLog = (message: string) => {
+  if (process.env.VERBOSE === 'true') {
+    testLog(message);
+  }
+};
+
 describe('🔄 Palindrome Utility Tests', () => {
   describe('✅ isPalindrome - Casos Positivos', () => {
     it('✅ Debe detectar palíndromos simples correctamente', () => {
@@ -13,7 +20,7 @@ describe('🔄 Palindrome Utility Tests', () => {
 
       testCases.forEach(({ input, expected, description }) => {
         expect(isPalindrome(input)).toBe(expected);
-        console.log(`    ✓ "${input}" (${description}): ${expected ? 'ES' : 'NO ES'} palíndromo`);
+        testLog(`    ✓ "${input}" (${description}): ${expected ? 'ES' : 'NO ES'} palíndromo`);
       });
     });
 
@@ -28,7 +35,7 @@ describe('🔄 Palindrome Utility Tests', () => {
 
       testCases.forEach(({ input, expected }) => {
         expect(isPalindrome(input)).toBe(expected);
-        console.log(`    ✓ "${input}": Case-insensitive OK`);
+        testLog(`    ✓ "${input}": Case-insensitive OK`);
       });
     });
 
@@ -58,7 +65,7 @@ describe('🔄 Palindrome Utility Tests', () => {
 
       complexPalindromes.forEach(({ input, expected, description }) => {
         expect(isPalindrome(input)).toBe(expected);
-        console.log(`    ✓ "${input}" (${description}): VÁLIDO`);
+        testLog(`    ✓ "${input}" (${description}): VÁLIDO`);
       });
     });
 
@@ -72,7 +79,7 @@ describe('🔄 Palindrome Utility Tests', () => {
 
       alphanumericCases.forEach(({ input, expected, description }) => {
         expect(isPalindrome(input)).toBe(expected);
-        console.log(`    ✓ "${input}" (${description}): VÁLIDO`);
+        testLog(`    ✓ "${input}" (${description}): VÁLIDO`);
       });
     });
   });
@@ -89,7 +96,7 @@ describe('🔄 Palindrome Utility Tests', () => {
 
       negativeCases.forEach(({ input, expected, reason }) => {
         expect(isPalindrome(input)).toBe(expected);
-        console.log(`    ✗ "${input}" (${reason}): Correctamente rechazado`);
+        testLog(`    ✗ "${input}" (${reason}): Correctamente rechazado`);
       });
     });
 
@@ -103,7 +110,7 @@ describe('🔄 Palindrome Utility Tests', () => {
 
       edgeCases.forEach(({ input, expected, reason }) => {
         expect(isPalindrome(input)).toBe(expected);
-        console.log(`    ✗ "${input}" (${reason}): Correctamente manejado`);
+        testLog(`    ✗ "${input}" (${reason}): Correctamente manejado`);
       });
     });
 
@@ -118,7 +125,7 @@ describe('🔄 Palindrome Utility Tests', () => {
 
       invalidInputs.forEach(({ input, expected, reason }) => {
         expect(isPalindrome(input)).toBe(expected);
-        console.log(`    ✗ ${typeof input === 'object' ? JSON.stringify(input) : input} (${reason}): Correctamente manejado`);
+        testLog(`    ✗ ${typeof input === 'object' ? JSON.stringify(input) : input} (${reason}): Correctamente manejado`);
       });
     });
   });
@@ -138,7 +145,7 @@ describe('🔄 Palindrome Utility Tests', () => {
         expect(result.discountAmount).toBe(50);
         expect(result.originalPrice).toBe(basePrice);
         
-        console.log(`    💰 "${palindrome}": $${basePrice} → $${result.finalPrice} (Ahorro: $${result.discountAmount})`);
+        testLog(`    💰 "${palindrome}": $${basePrice} → $${result.finalPrice} (Ahorro: $${result.discountAmount})`);
       });
     });
 
@@ -154,7 +161,7 @@ describe('🔄 Palindrome Utility Tests', () => {
         expect(result.discountAmount).toBe(0);
         expect(result.originalPrice).toBe(basePrice);
         
-        console.log(`    💰 "${term}": $${basePrice} → $${result.finalPrice} (Sin descuento)`);
+        testLog(`    💰 "${term}": $${basePrice} → $${result.finalPrice} (Sin descuento)`);
       });
     });
 
@@ -169,7 +176,7 @@ describe('🔄 Palindrome Utility Tests', () => {
         expect(result.finalPrice).toBeCloseTo(expectedFinalPrice, 2);
         expect(result.discountAmount).toBeCloseTo(expectedDiscount, 2);
         
-        console.log(`    💰 Precio $${price}: Descuento $${result.discountAmount.toFixed(2)} → Final $${result.finalPrice.toFixed(2)}`);
+        testLog(`    💰 Precio $${price}: Descuento $${result.discountAmount.toFixed(2)} → Final $${result.finalPrice.toFixed(2)}`);
       });
     });
 
@@ -187,7 +194,7 @@ describe('🔄 Palindrome Utility Tests', () => {
         expect(result.finalPrice).toBe(price * 0.5);
         expect(result.discountAmount).toBe(price * 0.5);
         
-        console.log(`    💰 ${description} ($${price}): Descuento aplicado correctamente`);
+        testLog(`    💰 ${description} ($${price}): Descuento aplicado correctamente`);
       });
     });
   });
@@ -198,14 +205,14 @@ describe('🔄 Palindrome Utility Tests', () => {
       
       singleChars.forEach(char => {
         expect(isPalindrome(char)).toBe(false);
-        console.log(`    ✗ Carácter único "${char}": Correctamente rechazado (requiere mínimo 2 caracteres)`);
+        testLog(`    ✗ Carácter único "${char}": Correctamente rechazado (requiere mínimo 2 caracteres)`);
       });
 
       // Casos especiales que también NO son palíndromos válidos
       const invalidChars = ['!', ' ', ''];
       invalidChars.forEach(char => {
         expect(isPalindrome(char)).toBe(false);
-        console.log(`    ✗ Carácter inválido "${char}": Correctamente rechazado`);
+        testLog(`    ✗ Carácter inválido "${char}": Correctamente rechazado`);
       });
     });
 
@@ -216,8 +223,8 @@ describe('🔄 Palindrome Utility Tests', () => {
       expect(isPalindrome(longPalindrome)).toBe(true);
       expect(isPalindrome(longNonPalindrome)).toBe(false);
       
-      console.log(`    ✓ String largo (${longPalindrome.length} chars): Manejado correctamente`);
-      console.log(`    ✗ String largo no-palíndromo (${longNonPalindrome.length} chars): Correctamente rechazado`);
+      testLog(`    ✓ String largo (${longPalindrome.length} chars): Manejado correctamente`);
+      testLog(`    ✗ String largo no-palíndromo (${longNonPalindrome.length} chars): Correctamente rechazado`);
     });
 
     it('🧪 Debe manejar caracteres especiales y unicode', () => {
@@ -231,7 +238,7 @@ describe('🔄 Palindrome Utility Tests', () => {
 
       unicodeCases.forEach(({ input, expected, description }) => {
         expect(isPalindrome(input)).toBe(expected);
-        console.log(`    ${expected ? '✓' : '✗'} "${input}" (${description}): ${expected ? 'ES' : 'NO ES'} palíndromo`);
+        testLog(`    ${expected ? '✓' : '✗'} "${input}" (${description}): ${expected ? 'ES' : 'NO ES'} palíndromo`);
       });
     });
   });

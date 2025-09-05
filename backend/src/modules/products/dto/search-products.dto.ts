@@ -1,6 +1,5 @@
 import { IsString, IsOptional, MaxLength, MinLength } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { Sanitize } from 'class-sanitizer';
 
 export class SearchProductsDto {
   @IsString({ message: 'El término de búsqueda debe ser una cadena de texto' })

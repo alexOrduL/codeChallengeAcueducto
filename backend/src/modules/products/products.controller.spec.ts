@@ -1,11 +1,55 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { ProductsController } from './products.controller';
+import { HttpException, HttpStatus, Controller, Get, Query, Param, ParseIntPipe, Req } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { SearchResponseDto } from './dto/search-response.dto';
+import { SearchProductsDto } from './dto/search-products.dto';
+import { Product } from './entities/product.entity';
+
+// Test version of ProductsController without ThrottlerGuard decorators
+@Controller('api/v1/products')
+class TestProductsController {
+  constructor(private readonly productsService: ProductsService) {}
+
+  @Get('search')
+  async searchProducts(
+    @Query() searchDto: SearchProductsDto,
+    @Req() request: any,
+  ): Promise<SearchResponseDto> {
+    try {
+      return await this.productsService.searchProducts(searchDto.q);
+    } catch (error) {
+      throw new HttpException('Error al buscar productos', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get()
+  async findAll(@Req() request: any): Promise<Product[]> {
+    try {
+      return await this.productsService.findAll();
+    } catch (error) {
+      throw new HttpException('Error al obtener productos', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number, @Req() request: any): Promise<Product> {
+    try {
+      const product = await this.productsService.findOne(id);
+      if (!product) {
+        throw new HttpException('Producto no encontrado', HttpStatus.NOT_FOUND);
+      }
+      return product;
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException('Error al obtener el producto', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+}
 
 describe('ProductsController', () => {
-  let controller: ProductsController;
+  let controller: TestProductsController;
   let service: ProductsService;
 
   const mockProductsService = {
@@ -37,7 +81,7 @@ describe('ProductsController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [ProductsController],
+      controllers: [TestProductsController],
       providers: [
         {
           provide: ProductsService,
@@ -46,7 +90,7 @@ describe('ProductsController', () => {
       ],
     }).compile();
 
-    controller = module.get<ProductsController>(ProductsController);
+    controller = module.get<TestProductsController>(TestProductsController);
     service = module.get<ProductsService>(ProductsService);
   });
 

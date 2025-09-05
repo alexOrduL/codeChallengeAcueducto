@@ -98,13 +98,13 @@ describe('ProductsService', () => {
       const result = await service.searchProducts('raqueta');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        '(LOWER(product.title) = :exactTitle OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring)',
-        { exactTitle: 'raqueta', substring: '%raqueta%' }
+        '(LOWER(product.title) = :exactTitle OR LOWER(product.title) ILIKE :titlePartial OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring)',
+        { exactTitle: 'raqueta', titlePartial: '%raqueta%', substring: '%raqueta%' }
       );
       expect(result.products).toHaveLength(2);
     });
 
-    it('should only search exact title when search term is <= 3 characters', async () => {
+    it('should search title (exact + partial) and brand when term has >= 2 characters', async () => {
       const queryBuilder = {
         where: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(mockProducts),
@@ -114,8 +114,8 @@ describe('ProductsService', () => {
       const result = await service.searchProducts('ab');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        '(LOWER(product.title) = :exactTitle)',
-        { exactTitle: 'ab' }
+        '(LOWER(product.title) = :exactTitle OR LOWER(product.title) ILIKE :titlePartial OR LOWER(product.brand) ILIKE :substring)',
+        { exactTitle: 'ab', titlePartial: '%ab%', substring: '%ab%' }
       );
       expect(result.products).toHaveLength(2);
     });
@@ -152,7 +152,7 @@ describe('ProductsService', () => {
       expect(result.products[0].finalPrice).toBe(100);
     });
 
-    it('should handle short search terms (less than 3 characters)', async () => {
+    it('should handle short search terms (2 characters) with title and brand search', async () => {
       const queryBuilder = {
         where: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue([]),
@@ -162,12 +162,12 @@ describe('ProductsService', () => {
       await service.searchProducts('ab');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        '(LOWER(product.title) = :exactTitle)',
-        { exactTitle: 'ab' }
+        '(LOWER(product.title) = :exactTitle OR LOWER(product.title) ILIKE :titlePartial OR LOWER(product.brand) ILIKE :substring)',
+        { exactTitle: 'ab', titlePartial: '%ab%', substring: '%ab%' }
       );
     });
 
-    it('should handle single character search with exact title only', async () => {
+    it('should handle single character search with title exact and partial only', async () => {
       const queryBuilder = {
         where: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue([]),
@@ -177,8 +177,8 @@ describe('ProductsService', () => {
       await service.searchProducts('p');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        '(LOWER(product.title) = :exactTitle)',
-        { exactTitle: 'p' }
+        '(LOWER(product.title) = :exactTitle OR LOWER(product.title) ILIKE :titlePartial)',
+        { exactTitle: 'p', titlePartial: '%p%' }
       );
     });
 
@@ -202,8 +202,8 @@ describe('ProductsService', () => {
       const result = await service.searchProducts('raqueta');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        '(LOWER(product.title) = :exactTitle OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring)',
-        { exactTitle: 'raqueta', substring: '%raqueta%' }
+        '(LOWER(product.title) = :exactTitle OR LOWER(product.title) ILIKE :titlePartial OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring)',
+        { exactTitle: 'raqueta', titlePartial: '%raqueta%', substring: '%raqueta%' }
       );
       expect(result.products).toHaveLength(1);
       expect(result.products[0].title).toBe('Raqueta ABBA Pro');
@@ -219,8 +219,8 @@ describe('ProductsService', () => {
       await service.searchProducts('PHONE');
 
       expect(queryBuilder.where).toHaveBeenCalledWith(
-        '(LOWER(product.title) = :exactTitle OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring)',
-        { exactTitle: 'phone', substring: '%phone%' }
+        '(LOWER(product.title) = :exactTitle OR LOWER(product.title) ILIKE :titlePartial OR LOWER(product.brand) ILIKE :substring OR LOWER(product.description) ILIKE :substring)',
+        { exactTitle: 'phone', titlePartial: '%phone%', substring: '%phone%' }
       );
     });
   });
