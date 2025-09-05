@@ -1,9 +1,9 @@
-# 🏗️ Arquitectura del Proyecto - Za-🦆🦆🦆 Tennis
+# 🏗️ Arquitectura del Proyecto - Palindrome Tennis Ecommerce
 
 ## 📁 Estructura de Carpetas (Buenas Prácticas)
 
 ```
-za-duck-duck-duck-tennis/
+palindrome-tennis-ecommerce/
 ├── 📁 docs/                          # Documentación técnica
 │   ├── ARCHITECTURE.md               # Este archivo - arquitectura
 │   ├── API.md                        # Documentación de API (futuro)
