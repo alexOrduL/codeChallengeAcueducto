@@ -193,15 +193,15 @@ describe('🔄 Palindrome Utility Tests', () => {
   });
 
   describe('🧪 Edge Cases y Casos Especiales', () => {
-    it('🧪 Debe manejar palíndromos de un solo carácter', () => {
-      const singleChars = ['a', 'A', '1']; // Removemos '!' porque se limpia a string vacío
+    it('🧪 Debe rechazar caracteres únicos como no palíndromos', () => {
+      const singleChars = ['a', 'A', '1', 'n', 'x']; 
       
       singleChars.forEach(char => {
-        expect(isPalindrome(char)).toBe(true);
-        console.log(`    ✓ Carácter único "${char}": ES palíndromo`);
+        expect(isPalindrome(char)).toBe(false);
+        console.log(`    ✗ Carácter único "${char}": Correctamente rechazado (requiere mínimo 2 caracteres)`);
       });
 
-      // Casos especiales que NO son palíndromos válidos
+      // Casos especiales que también NO son palíndromos válidos
       const invalidChars = ['!', ' ', ''];
       invalidChars.forEach(char => {
         expect(isPalindrome(char)).toBe(false);

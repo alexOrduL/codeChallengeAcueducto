@@ -62,7 +62,8 @@ describe('ProductsController', () => {
     it('should return search results successfully', async () => {
       mockProductsService.searchProducts.mockResolvedValue(mockSearchResponse);
 
-      const result = await controller.searchProducts({ q: 'abba' });
+      const mockRequest = { ip: '127.0.0.1', url: '/api/v1/products/search?q=abba' } as any;
+      const result = await controller.searchProducts({ q: 'abba' }, mockRequest);
 
       expect(result).toEqual(mockSearchResponse);
       expect(service.searchProducts).toHaveBeenCalledWith('abba');
@@ -71,7 +72,9 @@ describe('ProductsController', () => {
     it('should throw HttpException when service throws error', async () => {
       mockProductsService.searchProducts.mockRejectedValue(new Error('Database error'));
 
-      await expect(controller.searchProducts({ q: 'test' })).rejects.toThrow(
+      const mockRequest = { ip: '127.0.0.1', url: '/api/v1/products/search?q=test' } as any;
+
+      await expect(controller.searchProducts({ q: 'test' }, mockRequest)).rejects.toThrow(
         new HttpException('Error al buscar productos', HttpStatus.INTERNAL_SERVER_ERROR)
       );
     });
@@ -92,7 +95,8 @@ describe('ProductsController', () => {
       ];
       mockProductsService.findAll.mockResolvedValue(mockProducts);
 
-      const result = await controller.findAll();
+      const mockRequest = { ip: '127.0.0.1', url: '/api/v1/products' } as any;
+      const result = await controller.findAll(mockRequest);
 
       expect(result).toEqual(mockProducts);
       expect(service.findAll).toHaveBeenCalled();
@@ -101,7 +105,9 @@ describe('ProductsController', () => {
     it('should throw HttpException when service throws error', async () => {
       mockProductsService.findAll.mockRejectedValue(new Error('Database error'));
 
-      await expect(controller.findAll()).rejects.toThrow(
+      const mockRequest = { ip: '127.0.0.1', url: '/api/v1/products' } as any;
+
+      await expect(controller.findAll(mockRequest)).rejects.toThrow(
         new HttpException('Error al obtener productos', HttpStatus.INTERNAL_SERVER_ERROR)
       );
     });
@@ -120,7 +126,8 @@ describe('ProductsController', () => {
       };
       mockProductsService.findOne.mockResolvedValue(mockProduct);
 
-      const result = await controller.findOne('1');
+      const mockRequest = { ip: '127.0.0.1', url: '/api/v1/products/1' } as any;
+      const result = await controller.findOne(1, mockRequest);
 
       expect(result).toEqual(mockProduct);
       expect(service.findOne).toHaveBeenCalledWith(1);
@@ -128,16 +135,18 @@ describe('ProductsController', () => {
 
     it('should throw NOT_FOUND when product does not exist', async () => {
       mockProductsService.findOne.mockResolvedValue(null);
+      const mockRequest = { ip: '127.0.0.1', url: '/api/v1/products/999' } as any;
 
-      await expect(controller.findOne('999')).rejects.toThrow(
+      await expect(controller.findOne(999, mockRequest)).rejects.toThrow(
         new HttpException('Producto no encontrado', HttpStatus.NOT_FOUND)
       );
     });
 
     it('should throw INTERNAL_SERVER_ERROR when service throws error', async () => {
       mockProductsService.findOne.mockRejectedValue(new Error('Database error'));
+      const mockRequest = { ip: '127.0.0.1', url: '/api/v1/products/1' } as any;
 
-      await expect(controller.findOne('1')).rejects.toThrow(
+      await expect(controller.findOne(1, mockRequest)).rejects.toThrow(
         new HttpException('Error al obtener el producto', HttpStatus.INTERNAL_SERVER_ERROR)
       );
     });

@@ -63,10 +63,10 @@ describe('ProductsController (e2e)', () => {
     await app.close();
   });
 
-  describe('/api/products/search (GET)', () => {
+  describe('/api/v1/products/search (GET)', () => {
     it('should return products with 50% discount for palindrome search', () => {
       return request(app.getHttpServer())
-        .get('/api/products/search?q=abba')
+        .get('/api/v1/products/search?q=abba')
         .expect(200)
         .expect((res) => {
           expect(res.body.isPalindrome).toBe(true);
@@ -80,7 +80,7 @@ describe('ProductsController (e2e)', () => {
 
     it('should return products without discount for non-palindrome search', () => {
       return request(app.getHttpServer())
-        .get('/api/products/search?q=regular')
+        .get('/api/v1/products/search?q=regular')
         .expect(200)
         .expect((res) => {
           expect(res.body.isPalindrome).toBe(false);
@@ -94,13 +94,13 @@ describe('ProductsController (e2e)', () => {
 
     it('should return 400 for missing search query', () => {
       return request(app.getHttpServer())
-        .get('/api/products/search')
+        .get('/api/v1/products/search')
         .expect(400);
     });
 
     it('should handle case-insensitive palindrome detection', () => {
       return request(app.getHttpServer())
-        .get('/api/products/search?q=Level')
+        .get('/api/v1/products/search?q=Level')
         .expect(200)
         .expect((res) => {
           expect(res.body.isPalindrome).toBe(true);
@@ -110,7 +110,7 @@ describe('ProductsController (e2e)', () => {
 
     it('should find products by exact title match', () => {
       return request(app.getHttpServer())
-        .get('/api/products/search?q=level')
+        .get('/api/v1/products/search?q=level')
         .expect(200)
         .expect((res) => {
           expect(res.body.products.length).toBeGreaterThan(0);
@@ -119,10 +119,10 @@ describe('ProductsController (e2e)', () => {
     });
   });
 
-  describe('/api/products (GET)', () => {
+  describe('/api/v1/products (GET)', () => {
     it('should return all products', () => {
       return request(app.getHttpServer())
-        .get('/api/products')
+        .get('/api/v1/products')
         .expect(200)
         .expect((res) => {
           expect(res.body).toBeInstanceOf(Array);
