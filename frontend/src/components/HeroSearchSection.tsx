@@ -115,18 +115,18 @@ export const HeroSearchSection: React.FC<HeroSearchSectionProps> = ({
         </div>
 
         {/* Stats Row */}
-        <div className="mt-8 flex flex-wrap justify-center gap-8 text-white/70">
+        <div className="mt-8 flex flex-wrap justify-center gap-8">
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-sm">Búsqueda en tiempo real</span>
+            <span className="text-sm text-white font-medium">Búsqueda en tiempo real</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-            <span className="text-sm">Descuentos automáticos</span>
+            <span className="text-sm text-white font-medium">Descuentos automáticos</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-            <span className="text-sm">12+ productos disponibles</span>
+            <span className="text-sm text-white font-medium">12+ productos disponibles</span>
           </div>
         </div>
       </div>

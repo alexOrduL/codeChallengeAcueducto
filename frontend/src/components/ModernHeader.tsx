@@ -29,7 +29,7 @@ export const ModernHeader: React.FC<ModernHeaderProps> = ({ className = '' }) =>
           <div className="flex items-center space-x-4">
             <Badge 
               variant="secondary" 
-              className="glass-effect text-white border-white/20 hidden md:flex animate-pulse-slow"
+              className="bg-white/20 text-white border-white/30 backdrop-blur-sm hidden md:flex animate-pulse-slow font-semibold"
             >
               🎯 50% OFF con Palíndromos
             </Badge>

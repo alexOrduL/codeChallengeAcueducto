@@ -71,13 +71,13 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
     <div className={`w-full max-w-md mx-auto ${className}`}>
       <form onSubmit={handleSubmit} className="relative">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
           <Input
             type="text"
             placeholder="Buscar productos... (ej: phone, abba, level)"
             value={searchTerm}
             onChange={handleInputChange}
-            className={`pl-10 pr-12 py-2 w-full transition-all duration-200 ${
+            className={`pl-10 pr-12 py-2 w-full transition-all duration-200 bg-white/95 text-gray-900 placeholder-gray-600 ${
               searchState === 'typing' ? 'ring-2 ring-blue-200' : ''
             } ${searchState === 'loading' ? 'ring-2 ring-blue-400' : ''}`}
             data-testid="search-input"
@@ -88,7 +88,7 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
             <button
               type="button"
               onClick={handleClear}
-              className="absolute right-8 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute right-8 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
               data-testid="clear-button"
             >
               <X className="h-4 w-4" />
@@ -114,25 +114,25 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
       {/* Estado y feedback al usuario */}
       <div className="mt-2 min-h-[24px] flex justify-center">
         {searchState === 'initial' && (
-          <p className="text-sm text-muted-foreground text-center">
+          <p className="text-sm text-white/90 text-center font-medium">
             Prueba con "phone" o palíndromos como "abba", "level" para descuentos especiales
           </p>
         )}
         
         {searchState === 'typing' && (
-          <p className="text-sm text-blue-600 text-center">
+          <p className="text-sm text-yellow-300 text-center font-medium">
             Escribiendo... (búsqueda en {Math.ceil((1000) / 1000)}s)
           </p>
         )}
         
         {searchState === 'loading' && (
-          <p className="text-sm text-blue-600 text-center">
+          <p className="text-sm text-blue-300 text-center font-medium">
             Buscando productos...
           </p>
         )}
         
         {searchState === 'results' && searchTerm && isPalindrome && (
-          <Badge variant="success" data-testid="palindrome-badge">
+          <Badge variant="success" data-testid="palindrome-badge" className="bg-green-500 text-white border-green-400">
             🎉 ¡Palíndromo detectado! 50% de descuento aplicado
           </Badge>
         )}
