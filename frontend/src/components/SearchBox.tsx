@@ -30,18 +30,16 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
     minLength: 0 // Sin longitud mínima
   });
 
-  // Efecto para ejecutar búsqueda cuando cambie el término debounced
-  useEffect(() => {
-    // Siempre ejecutar la búsqueda, incluso con término vacío
-    onSearch(debouncedTerm, isTyping);
-  }, [debouncedTerm, onSearch, isTyping]);
-
-  // Notificar cuando el usuario está escribiendo
+  // Efecto unificado para manejar búsquedas (evita requests duplicados)
   useEffect(() => {
     if (isTyping) {
+      // Si está escribiendo, notificar con el término actual
       onSearch(searchTerm, true);
+    } else {
+      // Si no está escribiendo, ejecutar búsqueda con término debounced
+      onSearch(debouncedTerm, false);
     }
-  }, [isTyping, searchTerm, onSearch]);
+  }, [debouncedTerm, isTyping, searchTerm, onSearch]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -131,11 +129,6 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
           </p>
         )}
         
-        {searchState === 'results' && searchTerm && isPalindrome && (
-          <Badge variant="success" data-testid="palindrome-badge" className="bg-green-500 text-white border-green-400">
-            🎉 ¡Palíndromo detectado! 50% de descuento aplicado
-          </Badge>
-        )}
       </div>
     </div>
   );
