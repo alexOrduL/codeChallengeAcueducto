@@ -3,18 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SearchBox } from '../SearchBox';
 
-// Mock del hook personalizado
-jest.mock('@/hooks/useSearchDebounce', () => ({
-  useSearchDebounce: jest.fn(() => ({
-    searchTerm: '',
-    debouncedTerm: '',
-    isTyping: false,
-    isLoading: false,
-    setSearchTerm: jest.fn(),
-    setIsLoading: jest.fn(),
-    clearSearch: jest.fn(),
-  })),
-}));
+// No need to mock the hook since it exists
 
 // Mock timers
 jest.useFakeTimers();

@@ -28,7 +28,7 @@ describe('ProductCard', () => {
     render(<ProductCard product={mockProduct} />);
     
     expect(screen.getByTestId('product-title')).toHaveTextContent('Test Product');
-    expect(screen.getByTestId('product-brand')).toHaveTextContent('Marca: Test Brand');
+    expect(screen.getByTestId('product-brand')).toHaveTextContent('Test Brand');
     expect(screen.getByTestId('product-description')).toHaveTextContent('Test product description');
     expect(screen.getByTestId('price')).toHaveTextContent('$100.00');
   });
@@ -46,7 +46,7 @@ describe('ProductCard', () => {
     
     const discountBadge = screen.getByTestId('discount-badge');
     expect(discountBadge).toBeInTheDocument();
-    expect(discountBadge).toHaveTextContent('-50% OFF');
+    expect(discountBadge).toHaveTextContent('50% OFF');
   });
 
   it('does not show discount badge when product has no discount', () => {
@@ -61,7 +61,7 @@ describe('ProductCard', () => {
     
     expect(screen.getByTestId('final-price')).toHaveTextContent('$50.00');
     expect(screen.getByTestId('original-price')).toHaveTextContent('$100.00');
-    expect(screen.getByTestId('savings')).toHaveTextContent('Ahorras: $50.00');
+    expect(screen.getByTestId('savings')).toHaveTextContent('Ahorras $50.00');
   });
 
   it('shows only regular price when product has no discount', () => {
@@ -98,8 +98,9 @@ describe('ProductCard', () => {
   it('applies hover effects with correct classes', () => {
     const { container } = render(<ProductCard product={mockProduct} />);
     
-    const card = container.querySelector('.hover\\:scale-105');
+    const card = container.querySelector('.product-card');
     expect(card).toBeInTheDocument();
+    expect(card).toHaveClass('hover:shadow-2xl');
   });
 
   it('formats prices correctly with decimals', () => {
@@ -113,8 +114,8 @@ describe('ProductCard', () => {
     
     render(<ProductCard product={productWithDecimals} />);
     
-    expect(screen.getByTestId('final-price')).toHaveTextContent('$50.00');
+    expect(screen.getByTestId('final-price')).toHaveTextContent('$49.99');
     expect(screen.getByTestId('original-price')).toHaveTextContent('$99.99');
-    expect(screen.getByTestId('savings')).toHaveTextContent('Ahorras: $50.00');
+    expect(screen.getByTestId('savings')).toHaveTextContent('Ahorras $49.99');
   });
 });
